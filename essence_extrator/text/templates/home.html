@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+        }
+        .main {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+        .heading {
+            background-color: #ff0046;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+            margin: -20px -20px 20px -20px;
+            font-size: 24px;
+        }
+        .input-div h2 {
+            margin: 0 0 10px;
+            font-size: 20px;
+            color: #333;
+        }
+        .input-div {
+            margin-bottom: 20px;
+        }
+        .txt {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #bfbfbf;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+            margin-bottom: 10px;
+            height: 100px; /* initial height */
+        }
+        .txt:focus {
+            border-color: #4671EA;
+            outline: none;
+        }
+        .file-input-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .file-input {
+            display: block;
+            margin: 10px auto;
+        }
+        .remove-file-btn {
+            position: absolute;
+            right: 10px;
+            top: 5px;
+            background-color: #ff0046;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 20px;
+            height: 20px;
+            text-align: center;
+            line-height: 18px;
+            font-size: 16px;
+            display: none;
+        }
+        .bttn, .clear-bttn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            margin: 5px;
+        }
+        .bttn:hover, .clear-bttn:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .summarizer-div {
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+            border: 1px solid #bfbfbf;
+            margin-top: 20px;
+            text-align: left;
+        }
+        .summarizer-div p {
+            margin: 0;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
+    </style>
+    <link rel="stylesheet" href="textsummarizerladingpage.css">
+    <link rel="icon" type="image/jpg" href="Designer.jpg">
+    <title>Essence Extractor</title>
+</head>
+<body>
+    <div class="main">
+        <h1 class="heading">Essence Extractor</h1>
+        <div class="input-div">
+            <h2>Enter Your Text Here</h2>
+            <form id="textForm" action="{% url 'home' %}" method="POST" enctype="multipart/form-data">
+                <textarea class="txt" name="input_text" placeholder="Type or paste your text here..."></textarea>
+                {% csrf_token %}
+                <div class="file-input-container">
+                    <input class="file-input" type="file" name="pdf_file" accept=".pdf">
+                    <button type="button" class="remove-file-btn">&times;</button>
+                </div>
+                <input class="bttn" type="submit" value="Generate">
+                <button type="button" class="clear-bttn" onclick="clearForm()">Clear</button>
+            </form>
+        </div>
+        <h2>Summarized Text</h2>
+        <div class="summarizer-div" id="summarizedText">
+            {% if message %}
+                <p>{{ message }}</p>
+            {% endif %}
+        </div>
+    </div>
+    <script>
+        const textarea = document.querySelector('.txt');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = (this.scrollHeight) + 'px';
+        });
+
+        function clearForm() {
+            document.querySelector('.txt').value = '';
+            document.querySelector('.txt').style.height = '100px'; // Reset to initial height
+            document.getElementById('summarizedText').innerHTML = '';
+            const fileInput = document.querySelector('.file-input');
+            fileInput.value = '';
+            document.querySelector('.remove-file-btn').style.display = 'none';
+        }
+
+        const fileInput = document.querySelector('.file-input');
+        const removeFileBtn = document.querySelector('.remove-file-btn');
+
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                removeFileBtn.style.display = 'inline';
+            } else {
+                removeFileBtn.style.display = 'none';
+            }
+        });
+
+        removeFileBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            removeFileBtn.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
